@@ -1,0 +1,99 @@
+package lab9;
+
+import java.util.NoSuchElementException;
+
+/**
+ * Implements a Map as an ordered list of (key,value) pairs.
+ * CSE131 Lab 9
+ * @author
+ * @version 1.0
+ * Date:
+ */
+
+public class OrderedListMap<K extends Comparable<K>,V> implements Map<K,V> {
+	
+	MapListItem<K,V> head;
+	
+	OrderedListMap(){
+		this.head = null;
+	}
+
+	public void put(K key, V value) {
+		MapListItem<K, V> item = new MapListItem<K,V>(key, value, null);
+		MapListItem<K,V> pointer = head;
+		if(head==null)
+			head = item;
+		else{
+			while(pointer.next!=null){
+				if(pointer.next.key.compareTo(item.key) < 0){
+					pointer = pointer.next;
+				}
+				else if(pointer.next.key.compareTo(item.key) == 0){
+					pointer.next.value = item.value;
+					break;
+				}
+				else{
+					item.next = pointer.next;
+					pointer.next = item;
+					break;
+				}
+			}
+			if(pointer.next == null)
+				pointer.next = item;
+		}
+		
+	}
+	public V get(K key) {
+		MapListItem<K,V> m = head;
+		while(m!=null){
+			if(key.compareTo(m.key) == 0){
+				return m.value;				
+			}
+			m=m.next;
+		}
+		throw new NoSuchElementException();
+	}
+
+
+	public boolean contains(K key) {
+		MapListItem<K,V> m = head;
+		while(m!=null){
+			if(m.key.compareTo(key) == 0){
+				return true;				
+			}
+			m=m.next;
+		}
+		return false;
+	}
+
+	public boolean remove(K key) {
+		if(contains(key)==false)
+			return false;
+		
+		MapListItem<K,V> pointer = head;
+		if(head.key.compareTo(key) == 0){
+			head =head.next;
+			return true;
+		}
+			while(pointer.next!=null){
+				if(pointer.next.key.compareTo(key) == 0){
+					pointer.next = pointer.next.next;
+					return true;
+				}
+				else
+					pointer=pointer.next;
+			}
+		return false;
+	}
+	
+	public String toString() {
+		MapListItem<K,V> pointer = head;
+		while(pointer.next!=null){
+			System.out.print("(" + pointer.key + " " +pointer.value + ") ");
+			pointer= pointer.next;
+		}
+		return "";
+	}
+
+
+}
